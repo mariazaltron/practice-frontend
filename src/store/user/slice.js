@@ -26,13 +26,27 @@ export const userSlice = createSlice({
       state.profile = action.payload.user;
       state.space = action.payload.space;
     },
-    mySpace: (state, action) => {
+    storyDeleteSuccess: (state, action) => {
+      const storyId = action.payload;
+      state.space.stories = state.space.stories.filter((s) => s.id !== storyId);
+    },
+    storyCreateSuccess: (state, action) => {
+      console.log(action.payload);
+      state.space.stories.unshift(action.payload);
+    },
+    spaceUpdated: (state, action) => {
       state.space = { ...action.payload, stories: state.space.stories };
     },
   },
 });
 
-export const { loginSuccess, logOut, tokenStillValid, mySpace } =
-  userSlice.actions;
+export const {
+  loginSuccess,
+  logOut,
+  tokenStillValid,
+  storyDeleteSuccess,
+  storyCreateSuccess,
+  storyUpdated,
+} = userSlice.actions;
 
 export default userSlice.reducer;

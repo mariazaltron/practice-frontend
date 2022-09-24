@@ -3,7 +3,13 @@ import axios from "axios";
 import { selectToken } from "./selectors";
 import { appLoading, appDoneLoading, setMessage } from "../appState/slice";
 import { showMessageWithTimeout } from "../appState/thunks";
-import { loginSuccess, logOut, tokenStillValid, mySpace } from "./slice";
+import {
+  loginSuccess,
+  logOut,
+  tokenStillValid,
+  storyDeleteSuccess,
+  storyCreateSuccess,
+} from "./slice";
 
 export const signUp = (name, email, password) => {
   return async (dispatch, getState) => {
@@ -16,7 +22,11 @@ export const signUp = (name, email, password) => {
       });
 
       dispatch(
-        loginSuccess({ token: response.data.token, user: response.data.user, space: response.data.space, })
+        loginSuccess({
+          token: response.data.token,
+          user: response.data.user,
+          space: response.data.space,
+        })
       );
       dispatch(showMessageWithTimeout("success", true, "account created"));
       dispatch(appDoneLoading());
@@ -155,3 +165,44 @@ export const getUserWithStoredToken = () => {
 //     }
 //   };
 // };
+
+export const deleteStoryFromSpace = (storyId) => async (dispatch, getState) => {
+  try {
+    dispatch(appLoading());
+    const { space, token } = getState().user;
+    const response = await axios.delete(
+      `${apiUrl}/spaces/${space.id}/stories/${storyId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    // console.log("response thunk ID", response); //ALWAYS CONSOLE.LOG WHAT YOU GET BACK!!
+    dispatch(storyDeleteSuccess(storyId));
+    dispatch(appDoneLoading());
+  } catch (e) {
+    console.log(e.message);
+  }
+};
+
+export const addStoryToSpace = (story) => async (dispatch, getState) => {
+  try {
+    dispatch(appLoading());
+    const { space, token } = getState().user;
+    const response = await axios.post(
+      `${apiUrl}/spaces/${space.id}/stories`,
+      story,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log("response thunk ID", response); //ALWAYS CONSOLE.LOG WHAT YOU GET BACK!!
+    dispatch(storyCreateSuccess(response.data.story));
+    dispatch(appDoneLoading());
+  } catch (e) {
+    console.log(e.message);
+  }
+};

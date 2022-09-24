@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectToken } from "../store/user/selectors";
 import { logOut } from "../store/user/slice";
 import { Link } from "react-router-dom";
+import { Button } from "react-bootstrap";
+import { style } from "@mui/system";
 
 export const Navigation = () => {
   const [open, setOpen] = useState(false);
@@ -24,8 +26,8 @@ export const Navigation = () => {
         <MenuLink to="/empty1">Empty 1</MenuLink>
 
         {token ? (
-          <div>
-            <button onClick={() => dispatch(logOut())}>Logout</button>
+          <div className="logoutButtons">
+            <Button onClick={() => dispatch(logOut())}>Logout</Button>
             <MenuLink to="/me">My Space</MenuLink>
           </div>
         ) : (
