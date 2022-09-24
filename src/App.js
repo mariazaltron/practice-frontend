@@ -4,24 +4,23 @@ import { useDispatch } from "react-redux";
 import { getUserWithStoredToken } from "./store/user/thunks";
 import { Routes, Route } from "react-router-dom";
 import { Navigation, MessageBox } from "./components";
-import { Homepage, Login, SignUp, SpaceDetailsPage } from "./pages"
-
+import { Homepage, Login, SignUp, SpaceDetailsPage, MeSpace } from "./pages";
 
 function App() {
-
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(getUserWithStoredToken());
   }, [dispatch]);
-  
+
   return (
     <div>
-      <Navigation/>
-      <MessageBox/>
+      <Navigation />
+      <MessageBox />
       <Routes>
-        <Route path="/spaces/:id" element={<SpaceDetailsPage/>}/>
-        <Route path="/" element={<Homepage />}/>
+        <Route path="/" element={<Homepage />} />
+        <Route path="/me" element={<MeSpace />} />
+        <Route path="/spaces/:id" element={<SpaceDetailsPage />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
       </Routes>

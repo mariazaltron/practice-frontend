@@ -3,7 +3,7 @@ import axios from "axios";
 import { selectToken } from "./selectors";
 import { appLoading, appDoneLoading, setMessage } from "../appState/slice";
 import { showMessageWithTimeout } from "../appState/thunks";
-import { loginSuccess, logOut, tokenStillValid } from "./slice";
+import { loginSuccess, logOut, tokenStillValid, mySpace } from "./slice";
 
 export const signUp = (name, email, password) => {
   return async (dispatch, getState) => {
@@ -16,7 +16,7 @@ export const signUp = (name, email, password) => {
       });
 
       dispatch(
-        loginSuccess({ token: response.data.token, user: response.data.user })
+        loginSuccess({ token: response.data.token, user: response.data.user, space: response.data.space, })
       );
       dispatch(showMessageWithTimeout("success", true, "account created"));
       dispatch(appDoneLoading());
@@ -55,7 +55,11 @@ export const login = (email, password) => {
       });
 
       dispatch(
-        loginSuccess({ token: response.data.token, user: response.data.user })
+        loginSuccess({
+          token: response.data.token,
+          user: response.data.user,
+          space: response.data.space,
+        })
       );
       dispatch(showMessageWithTimeout("success", false, "welcome back!", 1500));
       dispatch(appDoneLoading());
@@ -101,14 +105,16 @@ export const getUserWithStoredToken = () => {
       });
 
       // token is still valid
-      dispatch(tokenStillValid({ user: response.data }));
+      dispatch(
+        tokenStillValid({
+          user: response.data.user,
+          space: response.data.space,
+        })
+      );
       dispatch(appDoneLoading());
     } catch (error) {
-      if (error.response) {
-        console.log(error.response.message);
-      } else {
-        console.log(error);
-      }
+      // console.log(error.response.message);
+
       // if we get a 4xx or 5xx response,
       // get rid of the token by logging out
       dispatch(logOut());
@@ -116,3 +122,36 @@ export const getUserWithStoredToken = () => {
     }
   };
 };
+
+// export const updateMySpace = (title, description, backgroundColor, color) => {
+//   return async (dispatch, getState) => {
+//     try {
+//       const { space, token } = getState().user;
+//       dispatch(appLoading());
+
+//       const response = await axios.patch(
+//         `${apiUrl}/spaces/${space.id}`,
+//         {
+//           title,
+//           description,
+//           backgroundColor,
+//           color,
+//         },
+//         {
+//           headers: {
+//             Authorization: `Bearer ${token}`,
+//           },
+//         }
+//       );
+//       // console.log(response);
+
+//       dispatch(
+//         showMessageWithTimeout("success", false, "update successfull", 3000)
+//       );
+//       dispatch(mySpace(response.data.space));
+//       dispatch(appDoneLoading());
+//     } catch (e) {
+//       console.log(e.message);
+//     }
+//   };
+// };
