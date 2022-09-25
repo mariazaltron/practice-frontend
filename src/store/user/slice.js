@@ -47,6 +47,7 @@ export const {
   storyDeleteSuccess,
   storyCreateSuccess,
   storyUpdated,
+  spaceUpdated
 } = userSlice.actions;
 
 export default userSlice.reducer;

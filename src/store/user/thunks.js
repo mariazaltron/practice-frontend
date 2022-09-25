@@ -9,6 +9,7 @@ import {
   tokenStillValid,
   storyDeleteSuccess,
   storyCreateSuccess,
+  spaceUpdated
 } from "./slice";
 
 export const signUp = (name, email, password) => {
@@ -133,38 +134,38 @@ export const getUserWithStoredToken = () => {
   };
 };
 
-// export const updateMySpace = (title, description, backgroundColor, color) => {
-//   return async (dispatch, getState) => {
-//     try {
-//       const { space, token } = getState().user;
-//       dispatch(appLoading());
+export const updateMySpace = (title, description, backgroundColor, color) => {
+  return async (dispatch, getState) => {
+    try {
+      const { space, token } = getState().user;
+      dispatch(appLoading());
 
-//       const response = await axios.patch(
-//         `${apiUrl}/spaces/${space.id}`,
-//         {
-//           title,
-//           description,
-//           backgroundColor,
-//           color,
-//         },
-//         {
-//           headers: {
-//             Authorization: `Bearer ${token}`,
-//           },
-//         }
-//       );
-//       // console.log(response);
+      const response = await axios.patch(
+        `${apiUrl}/spaces/${space.id}`,
+        {
+          title,
+          description,
+          backgroundColor,
+          color,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      // console.log(response);
 
-//       dispatch(
-//         showMessageWithTimeout("success", false, "update successfull", 3000)
-//       );
-//       dispatch(mySpace(response.data.space));
-//       dispatch(appDoneLoading());
-//     } catch (e) {
-//       console.log(e.message);
-//     }
-//   };
-// };
+      dispatch(
+        showMessageWithTimeout("success", false, "update successfull", 3000)
+      );
+      dispatch(spaceUpdated(response.data.space));
+      dispatch(appDoneLoading());
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
+};
 
 export const deleteStoryFromSpace = (storyId) => async (dispatch, getState) => {
   try {
@@ -201,6 +202,7 @@ export const addStoryToSpace = (story) => async (dispatch, getState) => {
     );
     console.log("response thunk ID", response); //ALWAYS CONSOLE.LOG WHAT YOU GET BACK!!
     dispatch(storyCreateSuccess(response.data.story));
+    dispatch(setMessage({ text: response.data.message }));
     dispatch(appDoneLoading());
   } catch (e) {
     console.log(e.message);
